@@ -2,15 +2,21 @@ package main
 
 import (
 	"fmt"
-	"github.com/yerassylbolatov/crudmux/db"
+	_ "github.com/lib/pq"
+	database "github.com/yerassylbolatov/crudmux/db"
 	"github.com/yerassylbolatov/crudmux/handlers"
 	"log"
 	"net/http"
 )
 
 func main() {
-	router := handlers.InitRoutes()
-	db.StartDb()
-	log.Fatal(http.ListenAndServe(":8080", router))
+	db, err := database.DbStart()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	handlers.Db = db
+	routes := handlers.InitRoutes()
 	fmt.Println("server starts at :8080")
+	log.Fatal(http.ListenAndServe(":8080", routes))
 }

@@ -1,4 +1,4 @@
-package db
+package database
 
 import (
 	"database/sql"
@@ -15,22 +15,21 @@ const (
 	DabName = "postgres"
 )
 
-func StartDb() {
+func DbStart() (*sql.DB, error) {
 	if err := godotenv.Load(); err != nil {
 		fmt.Printf("error when loading environment variables %s\n", err.Error())
-		return
+		return nil, err
 	}
 	conn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", Host, Port, User, os.Getenv("DB_PASSWORD"), DabName)
 	db, err := sql.Open("postgres", conn)
 	if err != nil {
 		fmt.Printf("error when openinig sql %s\n", err.Error())
-		return
+		return nil, err
 	}
-	defer db.Close()
 	err = db.Ping()
 	if err != nil {
 		fmt.Printf("error when pinging sql %s\n", err.Error())
-		return
+		return nil, err
 	}
-	fmt.Println("db connected successfully!")
+	return db, nil
 }
