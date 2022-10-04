@@ -15,8 +15,7 @@ var Db *sql.DB
 
 func returnAllCars(w http.ResponseWriter, r *http.Request) {
 	var vehicles []models.Vehicle
-	sqlStatement := `
-SELECT * FROM cars`
+	sqlStatement := `SELECT * FROM cars`
 	rows, err := Db.Query(sqlStatement)
 	defer rows.Close()
 	if err != nil {
@@ -85,16 +84,13 @@ func createCar(w http.ResponseWriter, r *http.Request) {
 	if err := json.Unmarshal(body, vehicle); err != nil {
 		log.Fatal(err)
 	}
-	sqlStatement := `
-INSERT INTO cars (id, make, model, price)
-VALUES ($1, $2, $3, $4)`
+	sqlStatement := `INSERT INTO cars (id, make, model, price) VALUES ($1, $2, $3, $4)`
 	_, err := Db.Exec(sqlStatement, vehicle.Id, vehicle.Make, vehicle.Model, vehicle.Price)
 	if err != nil {
 		log.Fatal(err)
 	}
 	var vehicles []models.Vehicle
-	sqlSelectStatement := `
-SELECT * FROM cars`
+	sqlSelectStatement := `SELECT * FROM cars`
 	rows, err := Db.Query(sqlSelectStatement)
 	defer rows.Close()
 	if err != nil {
@@ -144,8 +140,7 @@ func returnCarById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	carId, _ := strconv.Atoi(vars["id"])
 	var vehicles []models.Vehicle
-	sqlStatement := `
-SELECT * FROM cars WHERE id=$1`
+	sqlStatement := `SELECT * FROM cars WHERE id=$1`
 	rows, err := Db.Query(sqlStatement, carId)
 	defer rows.Close()
 	if err != nil {
